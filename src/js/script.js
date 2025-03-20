@@ -4,6 +4,7 @@ let boxes = document.querySelectorAll(".box");
 let buttons = document.querySelectorAll("#buttons-container button");
 let messageContainer = document.querySelector("#message");
 let messageText = document.querySelector("#message p")
+let secondPlayer;
 
 // contador de jogadas
 
@@ -35,6 +36,11 @@ for(let i = 0; i < boxes.length; i++) {
             //salvando jogada
             if(player1 == player2) {
                 player1++;
+                
+                if(secondPlayer == 'ai-player') {
+                    iaPlay();
+                    player2++;
+                }
             } else {
                 player2++;
             }
@@ -42,6 +48,24 @@ for(let i = 0; i < boxes.length; i++) {
             checkWinCondition();
         }
     });
+}
+
+
+// escolher modo de jogo
+for(let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener("click", function() {
+        
+        secondPlayer = this.getAttribute("id");
+
+        for(let j = 0; j < buttons.length; j++) {
+            buttons[j].style.display = 'none';
+        };
+
+        setTimeout(function() {
+            let container = document.querySelector("#container");
+            container.classList.remove("hide");
+        }, 500)
+    })
 }
 
 const checkWinCondition = () => {
@@ -219,7 +243,7 @@ const declareWinner = (winner) => {
 
     player1 = 0
     player2 = 0
-    
+
     // limpando jogo
     let boxesToRemove = document.querySelectorAll(".box div");
 
@@ -228,3 +252,28 @@ const declareWinner = (winner) => {
     }
 }
 
+const iaPlay = () => {
+
+    let cloneO = o.cloneNode(true);
+    counter = 0;
+    filled = 0;
+
+    for(let i = 0; i < boxes.length; i++) {
+
+        let randomNumber = Math.floor(Math.random() * 5);
+
+        if(boxes[i].childNodes[0] == undefined) {
+            if(randomNumber <= 1) {
+                boxes[i].appendChild(cloneO);
+                counter++;
+                break;
+            }
+        } else {
+            filled++;
+        }
+    }
+
+    if(counter == 0 && filled < 9) {
+        iaPlay()
+    }
+}
